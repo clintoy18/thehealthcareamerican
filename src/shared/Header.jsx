@@ -4,11 +4,13 @@ const Header = ({ step }) => (
   <header className="bg-white text-slate-700 py-4 shadow-lg border-b-4 border-[#0891B2]">
     <div className="max-w-5xl mx-auto px-6 flex justify-between items-center">
       <div className="flex items-center gap-3">
+        <a href="https://www.healthcareamerican.com/">
         <img 
           src="https://www.healthcareamerican.com/wp-content/themes/awi/img/healthcare-american-logo.png" 
           alt="Healthcare American" 
           className="h-16 object-contain"
         />
+        </a>
       </div>
       <div className="flex gap-3">
         {[1, 2, 3].map(i => (

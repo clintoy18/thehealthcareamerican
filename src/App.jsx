@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { calculateLifePremium } from './core/lifeInsurance';
+import { getCRMService } from './core/services/CRMService';
 import Header from './shared/Header';
 import LifeQuotePage from './features/Life/LifeQuotePage';
 import LifeResults from './features/Life/LifeResults';
@@ -53,9 +54,56 @@ const App = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleFinalSubmit = () => {
-    console.log("Transmitting lead to thehealthcareamerican API...", formData);
-    alert("Thank you! A financial professional will contact you shortly.");
+  const handleFinalSubmit = async () => {
+    // Initialize CRM Service
+    const crmService = getCRMService();
+
+    // Prepare lead data packet
+    const leadData = {
+      // Personal Information
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      
+      // Quote Parameters
+      age: formData.age,
+      zip: formData.zip,
+      gender: formData.gender,
+      healthStatus: formData.healthStatus,
+      smoker: formData.smoker,
+      
+      // Coverage & Term
+      coverage: formData.coverage,
+      years: formData.years,
+      
+      // Premium Calculation
+      estimatedMonthlyPremium: premium,
+      
+      // Metadata
+      timestamp: new Date().toISOString(),
+      source: 'web_quote_tool',
+    };
+
+    try {
+      // Submit lead through CRM Service
+      const result = await crmService.submitLead(leadData);
+      console.log("Lead successfully transmitted:", result);
+      alert("Thank you! A financial professional will contact you shortly.");
+    } catch (error) {
+      console.error("Lead submission failed:", error);
+      
+      // Determine user-facing message based on error type
+      let userMessage = "We're experiencing technical difficulties. Please try again or contact us directly.";
+      
+      if (error.code === 'VALIDATION_ERROR') {
+        userMessage = "Please complete all required fields correctly.";
+      } else if (error.code === 'TIMEOUT') {
+        userMessage = "Request timed out. Please check your connection and try again.";
+      }
+      
+      alert(userMessage);
+    }
   };
 
   return (
