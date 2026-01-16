@@ -42,9 +42,9 @@ const LifeResults = ({ formData, premium, onUpdate, onPrev, onNext }) => {
           
           <button 
             onClick={onNext}
-            className="w-full bg-[#0891B2] hover:bg-[#0E7490] text-white font-black py-5 rounded-2xl shadow-lg transition-all transform hover:scale-105 flex items-center justify-center gap-3 uppercase tracking-widest"
+            className="w-full bg-[#0891B2] hover:bg-[#0E7490] text-white font-black py-5 rounded-2xl shadow-lg transition-all transform hover:scale-105 flex items-center justify-center uppercase tracking-widest"
           >
-            <Zap size={20} /> Speak with an Advisor
+            Speak with an Advisor <ArrowRight size={20} />
           </button>
         </div>
 
