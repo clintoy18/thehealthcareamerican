@@ -22,34 +22,34 @@ const LifeQuotePage = ({ onNext }) => {
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="p-8 md:p-14">
         <div className="text-center mb-12">
-          <h2 className="text-5xl font-black text-[#002855] mb-3">Get Your Quote in 60 Seconds</h2>
+          <h2 className="text-5xl font-black text-[#0891B2] mb-3">Get Your Quote in 60 Seconds</h2>
           <p className="text-slate-500 text-lg">Fast, simple, and completely free</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <Cake size={18} className="text-[#0ea5e9]" />
+              <Cake size={18} className="text-[#0891B2]" />
               <label className="text-sm font-black uppercase text-slate-600">Your Age</label>
             </div>
             <input 
               type="number" 
               value={formData.age}
               onChange={(e) => updateField('age', Number(e.target.value))}
-              className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0ea5e9] focus:bg-white focus:shadow-lg text-lg font-semibold transition-all" 
+              className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg font-semibold transition-all" 
             />
           </div>
           
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <MapPin size={18} className="text-[#0ea5e9]" />
+              <MapPin size={18} className="text-[#E63946]" />
               <label className="text-sm font-black uppercase text-slate-600">Zip Code</label>
             </div>
             <input 
               type="text" 
               value={formData.zip}
               onChange={(e) => updateField('zip', e.target.value)}
-              className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0ea5e9] focus:bg-white focus:shadow-lg text-lg font-semibold transition-all" 
+              className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg font-semibold transition-all" 
             />
           </div>
 
@@ -58,7 +58,7 @@ const LifeQuotePage = ({ onNext }) => {
             <select 
               value={formData.gender}
               onChange={(e) => updateField('gender', e.target.value)}
-              className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0ea5e9] focus:bg-white focus:shadow-lg font-semibold transition-all cursor-pointer"
+              className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg font-semibold transition-all cursor-pointer"
             >
               <option>Male</option>
               <option>Female</option>
@@ -70,7 +70,7 @@ const LifeQuotePage = ({ onNext }) => {
             <select 
               value={formData.healthStatus}
               onChange={(e) => updateField('healthStatus', e.target.value)}
-              className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0ea5e9] focus:bg-white focus:shadow-lg font-semibold transition-all cursor-pointer"
+              className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg font-semibold transition-all cursor-pointer"
             >
               <option>Excellent</option>
               <option>Good</option>
@@ -116,8 +116,8 @@ const LifeQuotePage = ({ onNext }) => {
         </div>
 
         {/* Premium Display Card */}
-        <div className="bg-gradient-to-br from-[#002855] to-[#003d7a] text-white rounded-3xl p-10 text-center shadow-2xl border border-[#0ea5e9]/30">
-          <p className="text-[11px] font-black uppercase tracking-widest text-[#0ea5e9] mb-4">Your Estimated Monthly Premium</p>
+        <div className="bg-gradient-to-br from-[#0891B2] to-[#06B6D4] text-white rounded-3xl p-10 text-center shadow-2xl border border-[#E63946]/30">
+          <p className="text-[11px] font-black uppercase tracking-widest text-white mb-4">Your Estimated Monthly Premium</p>
           <div className="flex items-start justify-center mb-8">
             <span className="text-4xl font-black mt-3">$</span>
             <span className="text-8xl font-black tracking-tighter">{estimatedPrice.split('.')[0]}</span>
@@ -129,7 +129,7 @@ const LifeQuotePage = ({ onNext }) => {
           
           <button 
             onClick={onNext}
-            className="w-full bg-[#0ea5e9] hover:bg-[#06b6d4] text-[#002855] px-12 py-5 rounded-2xl font-black uppercase tracking-widest transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-3 text-lg"
+            className="w-full bg-[#0891B2] hover:bg-[#0E7490] text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-3 text-lg"
           >
             See Your Full Quote <ChevronRight size={22} />
           </button>
