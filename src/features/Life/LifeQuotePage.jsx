@@ -1,22 +1,10 @@
 // src/features/Life/LifeQuotePage.jsx
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { calculateLifePremium } from '../../core/lifeInsurance';
 import { ChevronRight, Cake, MapPin, Users } from 'lucide-react';
 
-const LifeQuotePage = ({ onNext }) => {
-  const [formData, setFormData] = useState({
-    age: 22,
-    zip: '99950',
-    gender: 'Male',
-    healthStatus: 'Excellent',
-    smoker: 'No',
-    coverage: 100000,
-    years: 10
-  });
-
+const LifeQuotePage = ({ formData, onUpdate, onNext }) => {
   const estimatedPrice = useMemo(() => calculateLifePremium(formData), [formData]);
-
-  const updateField = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -35,20 +23,20 @@ const LifeQuotePage = ({ onNext }) => {
             <input 
               type="number" 
               value={formData.age}
-              onChange={(e) => updateField('age', Number(e.target.value))}
+              onChange={(e) => onUpdate('age', Number(e.target.value))}
               className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg font-semibold transition-all" 
             />
           </div>
           
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <MapPin size={18} className="text-[#E63946]" />
+              <MapPin size={18} className="text-[#0891B2]" />
               <label className="text-sm font-black uppercase text-slate-600">Zip Code</label>
             </div>
             <input 
               type="text" 
               value={formData.zip}
-              onChange={(e) => updateField('zip', e.target.value)}
+              onChange={(e) => onUpdate('zip', e.target.value)}
               className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg font-semibold transition-all" 
             />
           </div>
@@ -57,7 +45,7 @@ const LifeQuotePage = ({ onNext }) => {
             <label className="text-sm font-black uppercase text-slate-600">Gender</label>
             <select 
               value={formData.gender}
-              onChange={(e) => updateField('gender', e.target.value)}
+              onChange={(e) => onUpdate('gender', e.target.value)}
               className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg font-semibold transition-all cursor-pointer"
             >
               <option>Male</option>
@@ -69,7 +57,7 @@ const LifeQuotePage = ({ onNext }) => {
             <label className="text-sm font-black uppercase text-slate-600">Health Status</label>
             <select 
               value={formData.healthStatus}
-              onChange={(e) => updateField('healthStatus', e.target.value)}
+              onChange={(e) => onUpdate('healthStatus', e.target.value)}
               className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg font-semibold transition-all cursor-pointer"
             >
               <option>Excellent</option>
@@ -87,10 +75,10 @@ const LifeQuotePage = ({ onNext }) => {
               {['No', 'Yes'].map(opt => (
                 <button
                   key={opt}
-                  onClick={() => updateField('smoker', opt)}
+                  onClick={() => onUpdate('smoker', opt)}
                   className={`flex-1 py-3 rounded-xl font-bold uppercase text-sm tracking-wider transition-all ${
                     formData.smoker === opt
-                      ? 'bg-[#002855] text-white shadow-lg'
+                      ? 'bg-[#0891B2] text-white shadow-lg'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
@@ -104,8 +92,8 @@ const LifeQuotePage = ({ onNext }) => {
             <label className="text-sm font-black uppercase text-slate-600">Coverage Amount</label>
             <select 
               value={formData.coverage}
-              onChange={(e) => updateField('coverage', Number(e.target.value))}
-              className="w-full p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0ea5e9] focus:bg-white focus:shadow-lg font-semibold transition-all cursor-pointer"
+              onChange={(e) => onUpdate('coverage', Number(e.target.value))}
+              className="w-full p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg font-semibold transition-all cursor-pointer"
             >
               <option value="100000">$100,000</option>
               <option value="250000">$250,000</option>
