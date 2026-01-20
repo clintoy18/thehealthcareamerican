@@ -4,7 +4,10 @@ import { calculateLifePremium } from '../../core/lifeInsurance';
 import { ChevronRight, Cake, MapPin, Users } from 'lucide-react';
 
 const LifeQuotePage = ({ formData, onUpdate, onNext }) => {
-  const estimatedPrice = useMemo(() => calculateLifePremium(formData), [formData]);
+  const estimatedPrice = useMemo(() => {
+    const premium = calculateLifePremium(formData);
+    return premium.toFixed(2);
+  }, [formData]);
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -63,7 +66,7 @@ const LifeQuotePage = ({ formData, onUpdate, onNext }) => {
               <option>Excellent</option>
               <option>Good</option>
               <option>Average</option>
-              <option>Fair</option>
+              <option>Below Average</option>
             </select>
           </div>
         </div>
@@ -72,17 +75,17 @@ const LifeQuotePage = ({ formData, onUpdate, onNext }) => {
           <div className="space-y-3">
             <label className="text-sm font-black uppercase text-slate-600">Do you smoke?</label>
             <div className="flex gap-3">
-              {['No', 'Yes'].map(opt => (
+              {['Non-smoker', 'Smoker'].map(opt => (
                 <button
                   key={opt}
-                  onClick={() => onUpdate('smoker', opt)}
+                  onClick={() => onUpdate('smokerStatus', opt)}
                   className={`flex-1 py-3 rounded-xl font-bold uppercase text-sm tracking-wider transition-all ${
-                    formData.smoker === opt
+                    formData.smokerStatus === opt
                       ? 'bg-[#0891B2] text-white shadow-lg'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
-                  {opt}
+                  {opt === 'Non-smoker' ? 'No' : 'Yes'}
                 </button>
               ))}
             </div>
@@ -113,6 +116,16 @@ const LifeQuotePage = ({ formData, onUpdate, onNext }) => {
               <span className="text-3xl font-black">.{estimatedPrice.split('.')[1]}</span>
               <p className="text-xs text-slate-300">/month</p>
             </div>
+          </div>
+          
+          <div className="mb-8 p-4 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20">
+            <p className="text-xs font-semibold text-slate-200 mb-2">FOR COVERAGE:</p>
+            <p className="text-2xl font-black text-white">
+              ${formData.coverage >= 1000000 
+                ? (formData.coverage / 1000000).toLocaleString(undefined, { maximumFractionDigits: 1 }) + 'M'
+                : (formData.coverage / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 }) + 'k'
+              }
+            </p>
           </div>
           
           <button 

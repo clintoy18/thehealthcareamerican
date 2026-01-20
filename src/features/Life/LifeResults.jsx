@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ChevronLeft, ArrowRight, CheckCircle2, Zap, DollarSign, Calendar } from 'lucide-react';
+import { calculateLifePremium } from '../../core/lifeInsurance';
 
-const LifeResults = ({ formData, premium, onUpdate, onPrev, onNext }) => {
+const LifeResults = ({ formData, onUpdate, onPrev, onNext }) => {
+  const premium = useMemo(() => {
+    if (!formData) return '0.00';
+    const calc = calculateLifePremium(formData);
+    return Number(calc).toFixed(2);
+  }, [formData]);
   return (
     <div className="p-8 md:p-14 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-center mb-12">
@@ -68,7 +74,7 @@ const LifeResults = ({ formData, premium, onUpdate, onPrev, onNext }) => {
             <input 
               type="range" 
               min="100000" 
-              max="5000000" 
+              max="500000" 
               step="50000" 
               value={formData.coverage || 100000}
               onChange={(e) => onUpdate('coverage', parseInt(e.target.value, 10))}
@@ -76,7 +82,16 @@ const LifeResults = ({ formData, premium, onUpdate, onPrev, onNext }) => {
             />
             <div className="flex justify-between text-xs text-slate-500 mt-2 font-semibold">
               <span>$100k</span>
-              <span>$5M</span>
+              <span>$500k</span>
+            </div>
+            <div className="mt-6 pt-4 border-t-2 border-slate-100">
+              <p className="text-xs text-slate-500 font-semibold mb-2">PREMIUM FOR THIS COVERAGE:</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black text-[#0891B2]">$</span>
+                <span className="text-4xl font-black text-[#0891B2]">{premium.split('.')[0]}</span>
+                <span className="text-2xl font-black text-[#0891B2]">.{premium.split('.')[1]}</span>
+                <span className="text-sm font-semibold text-slate-600 ml-2">/month</span>
+              </div>
             </div>
           </div>
 
@@ -86,8 +101,8 @@ const LifeResults = ({ formData, premium, onUpdate, onPrev, onNext }) => {
               <Calendar className="text-[#0891B2]" size={22} />
               <h3 className="font-black text-[#0891B2] text-lg">Policy Term</h3>
             </div>
-            <div className="grid grid-cols-4 gap-2">
-              {[10, 15, 20, 30].map((yr) => (
+            <div className="grid grid-cols-3 gap-2">
+              {[10, 20, 30].map((yr) => (
                 <button 
                   key={yr}
                   onClick={() => onUpdate('years', yr)}
