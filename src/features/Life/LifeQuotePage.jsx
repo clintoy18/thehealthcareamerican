@@ -23,12 +23,15 @@ const LifeQuotePage = ({ formData, onUpdate, onNext }) => {
               <Cake size={18} className="text-[#0891B2]" />
               <label className="text-sm font-black uppercase text-slate-600">Your Age</label>
             </div>
-            <input 
-              type="number" 
-              value={formData.age}
-              onChange={(e) => onUpdate('age', Number(e.target.value))}
-              className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg font-semibold transition-all" 
-            />
+           <input 
+            type="number" 
+            value={formData.age ?? ""}   // allow empty
+            onChange={(e) => {
+              const value = e.target.value;
+              onUpdate('age', value === "" ? "" : Number(value));
+            }}
+            className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg font-semibold transition-all" 
+          />
           </div>
           
           <div className="space-y-3">
