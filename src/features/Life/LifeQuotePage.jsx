@@ -74,6 +74,7 @@ const LifeQuotePage = ({ formData, onUpdate, onNext }) => {
             </div>
             <input 
               type="number" 
+              required
               value={formData.age ?? ""}
               onChange={(e) => onUpdate('age', e.target.value === "" ? "" : Number(e.target.value))}
               className={`w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none transition-all text-lg font-semibold ${
@@ -94,6 +95,7 @@ const LifeQuotePage = ({ formData, onUpdate, onNext }) => {
             </div>
             <select 
               value={formData.coverage}
+              required
               onChange={(e) => onUpdate('coverage', Number(e.target.value))}
               className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] font-semibold transition-all cursor-pointer"
             >
@@ -110,6 +112,7 @@ const LifeQuotePage = ({ formData, onUpdate, onNext }) => {
             </div>
             <select 
               value={formData.healthStatus}
+              required
               onChange={(e) => onUpdate('healthStatus', e.target.value)}
               className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-[#0891B2] font-semibold transition-all cursor-pointer"
             >

@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
 import { ChevronLeft, Lock, Mail, Phone, MapPin, User, CheckCircle2 } from 'lucide-react';
+import { validateContactForm } from '../../core/validations/contactValidation';
 
 const ContactForm = ({ formData, onUpdate, onPrev, onSubmit }) => {
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = () => {
-    onSubmit();
-    setSubmitted(true);
-  };
+  const validationErrors = validateContactForm(formData);
+
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
+
+  setErrors({});
+  onSubmit();
+  setSubmitted(true);
+};
+
+
+ 
+
 
   if (submitted) {
     return (
@@ -55,13 +69,18 @@ const ContactForm = ({ formData, onUpdate, onPrev, onSubmit }) => {
                 <User size={18} className="text-[#0891B2]" />
                 <label className="text-sm font-black uppercase text-slate-600">First Name</label>
               </div>
-              <input 
-                type="text" 
-                placeholder="John" 
-                value={formData.firstName}
-                onChange={(e) => onUpdate('firstName', e.target.value)}
-                className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg transition-all" 
-              />
+          <input 
+              type="text"
+              value={formData.firstName ?? ""}
+              onChange={(e) => onUpdate('firstName', e.target.value)}
+              className={`w-full p-4 bg-slate-50 border-2 rounded-xl outline-none text-lg transition-all
+                ${errors.firstName ? 'border-red-500' : 'border-slate-200 focus:border-[#0891B2]'}`}
+            />
+
+            {errors.firstName && (
+              <p className="text-sm text-red-600 font-medium">{errors.firstName}</p>
+            )}
+
             </div>
 
             <div className="space-y-3">
@@ -69,13 +88,18 @@ const ContactForm = ({ formData, onUpdate, onPrev, onSubmit }) => {
                 <User size={18} className="text-[#0891B2]" />
                 <label className="text-sm font-black uppercase text-slate-600">Last Name</label>
               </div>
-              <input 
-                type="text" 
-                placeholder="Doe" 
-                value={formData.lastName}
-                onChange={(e) => onUpdate('lastName', e.target.value)}
-                className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg transition-all" 
-              />
+             <input 
+              type="text"
+              value={formData.lastName ?? ""}
+              onChange={(e) => onUpdate('lastName', e.target.value)}
+              className={`w-full p-4 bg-slate-50 border-2 rounded-xl outline-none text-lg transition-all
+                ${errors.lastName ? 'border-red-500' : 'border-slate-200 focus:border-[#0891B2]'}`}
+            />
+
+            {errors.lastName && (
+              <p className="text-sm text-red-600 font-medium">{errors.lastName}</p>
+            )}
+
             </div>
 
             <div className="md:col-span-2 space-y-3">
@@ -83,13 +107,17 @@ const ContactForm = ({ formData, onUpdate, onPrev, onSubmit }) => {
                 <Mail size={18} className="text-[#0891B2]" />
                 <label className="text-sm font-black uppercase text-slate-600">Email Address</label>
               </div>
-              <input 
-                type="email" 
-                placeholder="john@example.com" 
-                value={formData.email}
-                onChange={(e) => onUpdate('email', e.target.value)}
-                className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg transition-all" 
-              />
+                 <input 
+              type="text"
+              value={formData.email ?? ""}
+              onChange={(e) => onUpdate('email', e.target.value)}
+              className={`w-full p-4 bg-slate-50 border-2 rounded-xl outline-none text-lg transition-all
+                ${errors.email ? 'border-red-500' : 'border-slate-200 focus:border-[#0891B2]'}`}
+            />
+
+            {errors.email && (
+              <p className="text-sm text-red-600 font-medium">{errors.email}</p>
+            )}
             </div>
 
             <div className="md:col-span-2 space-y-3">
@@ -97,13 +125,17 @@ const ContactForm = ({ formData, onUpdate, onPrev, onSubmit }) => {
                 <Phone size={18} className="text-[#0891B2]" />
                 <label className="text-sm font-black uppercase text-slate-600">Phone Number</label>
               </div>
-              <input 
-                type="tel" 
-                placeholder="(555) 123-4567" 
-                value={formData.phone}
-                onChange={(e) => onUpdate('phone', e.target.value)}
-                className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl outline-none focus:border-[#0891B2] focus:bg-white focus:shadow-lg text-lg transition-all" 
-              />
+                <input 
+              type="text"
+              value={formData.phone ?? ""}
+              onChange={(e) => onUpdate('phone', e.target.value)}
+              className={`w-full p-4 bg-slate-50 border-2 rounded-xl outline-none text-lg transition-all
+                ${errors.phone ? 'border-red-500' : 'border-slate-200 focus:border-[#0891B2]'}`}
+            />
+
+            {errors.phone && (
+              <p className="text-sm text-red-600 font-medium">{errors.phone}</p>
+            )}
             </div>
           </div>
         </div>
