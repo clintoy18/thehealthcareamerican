@@ -1,160 +1,113 @@
-// src/core/lifeInsurance.js
-// Reference: See life_multipliers.txt for all calculation rules and multiplier values
-
 /**
- * Base rates for 10-Year Term, $100,000 Coverage
- * Indexed by age
- * Source: life_multipliers.txt - Base Rates (10-Year Term, $100,000 Coverage)
+ * Configuration for all Life Insurance Products
+ * Source: Life_Insurance_Quoting_Tool_Maryland (1).xlsx
  */
-const BASE_RATES = {
-  5: 8,
-  10: 9,
-  15: 10,
-  18: 12,
-  25: 14,
-  30: 16,
-  35: 18,
-  40: 22,
-  45: 30,
-  50: 42,
-  55: 60,
-  59: 75,
-  65: 115,
-};
-
-/**
- * Get the closest base rate for a given age
- */
-const getBaseRateByAge = (age) => {
-  const agesList = Object.keys(BASE_RATES).map(Number).sort((a, b) => a - b);
-  
-  if (age <= agesList[0]) return BASE_RATES[agesList[0]];
-  if (age >= agesList[agesList.length - 1]) return BASE_RATES[agesList[agesList.length - 1]];
-  
-  // Find closest age
-  let closest = agesList[0];
-  for (let i = 0; i < agesList.length; i++) {
-    if (Math.abs(agesList[i] - age) < Math.abs(closest - age)) {
-      closest = agesList[i];
+export const PRODUCT_CONFIG = {
+  TERM_LIFE: {
+    baseAmount: 100000,
+    minAge: 5,
+    maxAge: 70,
+    baseRates: {
+      5: 8, 10: 9, 15: 10, 18: 12, 25: 14, 30: 16, 35: 18, 
+      40: 22, 45: 30, 50: 42, 55: 60, 59: 75, 65: 115, 68: 130, 70: 175
+    }
+  },
+  WHOLE_LIFE: {
+    baseAmount: 50000,
+    minAge: 1,
+    maxAge: 65,
+    baseRates: {
+      1: 25, 5: 28, 10: 30, 15: 35, 18: 40, 25: 65, 35: 100, 45: 160, 55: 250, 65: 360
+    }
+  },
+  FINAL_EXPENSE: {
+    baseAmount: 10000,
+    minAge: 60,
+    maxAge: 80,
+    baseRates: {
+      60: 45,
+      65: 60,
+      70: 85,
+      75: 120,
+      80: 165
     }
   }
-  
-  return BASE_RATES[closest];
+};
+
+const MULTIPLIERS = {
+  TERM_LENGTH: { 10: 1.0, 20: 1.6, 30: 2.2 },
+  HEALTH: { 'Excellent': 0.85, 'Good': 1.0, 'Average': 1.3, 'Below Average': 1.7 },
+  TOBACCO: { 'Non-smoker': 1.0, 'Smoker': 2.3 },
+  // Coverage interpolation points
+  COVERAGE_TIERS: [
+    { amount: 10000, multiplier: 0.28 }, // Extrapolated for Final Expense
+    { amount: 50000, multiplier: 0.60 },
+    { amount: 100000, multiplier: 1.00 },
+    { amount: 250000, multiplier: 2.20 },
+    { amount: 500000, multiplier: 4.10 }
+  ]
 };
 
 /**
- * Term Multipliers
- * Source: life_multipliers.txt - Term Multipliers
+ * Finds the closest base rate in the product-specific table
  */
-const TERM_MULTIPLIERS = {
-  10: 1.0,
-  20: 1.6,
-  30: 2.2,
+const getBaseRate = (category, age) => {
+  const config = PRODUCT_CONFIG[category];
+  if (!config) return 0;
+
+  const ages = Object.keys(config.baseRates).map(Number).sort((a, b) => a - b);
+  const closestAge = ages.reduce((prev, curr) => 
+    Math.abs(curr - age) < Math.abs(prev - age) ? curr : prev
+  );
+
+  return config.baseRates[closestAge];
 };
 
 /**
- * Get coverage multiplier for any coverage amount
- * Interpolates between known multiplier values for custom amounts
+ * Calculates a coverage multiplier based on linear interpolation
  */
-const getCoverageMultiplier = (coverage) => {
-  const multipliers = [
-    { amount: 50000, multiplier: 0.6 },
-    { amount: 100000, multiplier: 1.0 },
-    { amount: 250000, multiplier: 2.2 },
-    { amount: 500000, multiplier: 4.1 },
-  ];
-  
-  // Validate input
-  if (!coverage || coverage <= 0) return 1.0;
-  
-  // Exact match
-  const exact = multipliers.find(m => m.amount === coverage);
-  if (exact) return exact.multiplier;
-  
-  // If below lowest, use lowest
-  if (coverage < multipliers[0].amount) return multipliers[0].multiplier;
-  
-  // If above highest, use highest
-  if (coverage > multipliers[multipliers.length - 1].amount) {
-    return multipliers[multipliers.length - 1].multiplier;
-  }
-  
-  // Find surrounding values and interpolate
-  for (let i = 0; i < multipliers.length - 1; i++) {
-    if (coverage >= multipliers[i].amount && coverage <= multipliers[i + 1].amount) {
-      const lower = multipliers[i];
-      const upper = multipliers[i + 1];
-      
-      // Linear interpolation
-      const ratio = (coverage - lower.amount) / (upper.amount - lower.amount);
+const getCoverageMultiplier = (amount) => {
+  const tiers = MULTIPLIERS.COVERAGE_TIERS;
+  if (amount <= tiers[0].amount) return tiers[0].multiplier;
+  if (amount >= tiers[tiers.length - 1].amount) return tiers[tiers.length - 1].multiplier;
+
+  for (let i = 0; i < tiers.length - 1; i++) {
+    if (amount >= tiers[i].amount && amount <= tiers[i + 1].amount) {
+      const lower = tiers[i];
+      const upper = tiers[i + 1];
+      const ratio = (amount - lower.amount) / (upper.amount - lower.amount);
       return lower.multiplier + (upper.multiplier - lower.multiplier) * ratio;
     }
   }
-  
   return 1.0;
 };
 
 /**
- * Source: life_multipliers.txt - Health Multipliers
- * Health Multipliers
- */
-const HEALTH_MULTIPLIERS = {
-  'Excellent': 0.85,
-  'Good': 1.0,
-  'Average': 1.3,
-  'Below Average': 1.7,
-};
-
-/**
- * Source: life_multipliers.txt - Tobacco Multipliers
- * Tobacco Multipliers
- */
-const TOBACCO_MULTIPLIERS = {
-  'Non-smoker': 1.0,
-  'Smoker': 2.3,
-};
-
-/**
- * Pure function to calculate life insurance premiums.
- * Formula: Base Rate × Term Multiplier × Coverage Multiplier × Health Multiplier × Tobacco Multiplier
- * 
- * @param {Object} params - Quote parameters
- * @param {number} params.age - Age of applicant
- * @param {number} params.coverage - Coverage amount in dollars
- * @param {number} params.years - Term length in years (10, 20, or 30)
- * @param {string} params.healthStatus - Health classification (Excellent, Good, Average, Below Average)
- * @param {string} params.smokerStatus - Smoker status (Non-smoker or Smoker)
- * @returns {number} Final monthly premium rounded to 2 decimals
+ * Final Calculation Engine
+ * Formula: Base Rate * Term Mult * (Coverage Mult / Base Amount Mult) * Health Mult * Tobacco Mult
  */
 export const calculateLifePremium = (params) => {
-  // Validate params object exists
-  if (!params || typeof params !== 'object') {
+  const { category, age, coverage, years, healthStatus, smokerStatus } = params;
+
+  const product = PRODUCT_CONFIG[category];
+  if (!product) return 0;
+
+  // AGE GUARD: Return 0 if age is out of bounds
+  if (age < product.minAge || age > product.maxAge) {
     return 0;
   }
+
+  const baseRate = getBaseRate(category, age);
+  const termMult = (category === 'TERM_LIFE') ? (MULTIPLIERS.TERM_LENGTH[years] || 1.0) : 1.0;
   
-  const { age, coverage, years, healthStatus, smokerStatus } = params;
-  
-  // Validate required fields
-  if (!age || !coverage || !years || !healthStatus || !smokerStatus) {
-    return 0;
-  }
-  
-  // Get base rate by age
-  const baseRate = getBaseRateByAge(age);
-  
-  // Get multipliers with validation
-  const termMultiplier = TERM_MULTIPLIERS[years] || TERM_MULTIPLIERS[10];
-  const coverageMultiplier = getCoverageMultiplier(coverage);
-  const healthMultiplier = HEALTH_MULTIPLIERS[healthStatus] || HEALTH_MULTIPLIERS['Good'];
-  const tobaccoMultiplier = TOBACCO_MULTIPLIERS[smokerStatus] || TOBACCO_MULTIPLIERS['Non-smoker'];
-  
-  // Validate all multipliers are numbers
-  if (![baseRate, termMultiplier, coverageMultiplier, healthMultiplier, tobaccoMultiplier].every(m => typeof m === 'number' && m > 0)) {
-    return 0;
-  }
-  
-  // Calculate final premium
-  const finalPremium = baseRate * termMultiplier * coverageMultiplier * healthMultiplier * tobaccoMultiplier;
-  
-  return parseFloat(finalPremium.toFixed(2));
+  const targetCoverageMult = getCoverageMultiplier(coverage);
+  const baseCoverageMult = getCoverageMultiplier(product.baseAmount);
+  const normalizedCoverageMult = targetCoverageMult / baseCoverageMult;
+
+  const healthMult = MULTIPLIERS.HEALTH[healthStatus] || 1.0;
+  const tobaccoMult = (smokerStatus === 'Smoker' || smokerStatus === 'Yes') ? 2.3 : 1.0;
+
+  const total = baseRate * termMult * normalizedCoverageMult * healthMult * tobaccoMult;
+
+  return parseFloat(total.toFixed(2));
 };

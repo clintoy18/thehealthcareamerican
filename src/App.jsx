@@ -35,7 +35,14 @@ const App = () => {
   // useMemo ensures math only runs when relevant data changes
   const premium = useMemo(() => {
     return calculateLifePremium(formData);
-  }, [formData.age, formData.coverage, formData.years, formData.healthStatus, formData.smoker]);
+  }, [
+    formData.age,
+    formData.coverage,
+    formData.years,
+    formData.healthStatus,
+    formData.smokerStatus,
+    formData.category
+  ]);
 
   // 3. State Handlers
   const updateField = (field, value) => {
