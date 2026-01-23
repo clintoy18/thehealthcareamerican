@@ -18,7 +18,7 @@ const App = () => {
     age: 22,
     zip: '99950',
     gender: 'Male',
-    healthStatus: 'Excellent',
+    healthStatus: 'Good',
     smoker: 'No',
     // Step 2: Coverage Parameters
     coverage: 100000,
